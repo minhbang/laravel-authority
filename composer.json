@@ -1,0 +1,34 @@
+{
+    "name": "minhbang/laravel-authority",
+    "description": "Laravel Authorization Package",
+    "keywords": [
+        "minhbang",
+        "laravel-authority"
+    ],
+    "homepage": "https://github.com/minhbang/laravel-authority",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Minh Bang",
+            "email": "contact@minhbang.com",
+            "homepage": "http://minhbang.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Minhbang\\Auth\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Minhbang\\Auth\\Test\\": "tests/"
+        }
+    }
+}
