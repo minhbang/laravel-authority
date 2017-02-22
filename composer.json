@@ -23,12 +23,15 @@
     },
     "autoload": {
         "psr-4": {
-            "Minhbang\\Auth\\": "src/"
-        }
+            "Minhbang\\Authority\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
-            "Minhbang\\Auth\\Test\\": "tests/"
+            "Minhbang\\Authority\\Test\\": "tests/"
         }
     }
 }
