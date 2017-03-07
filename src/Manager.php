@@ -21,9 +21,9 @@ class Manager
     protected $role_groups = [];
 
     /**
-     * @var \Minhbang\Authority\User
+     * @var \Minhbang\Authority\User[]
      */
-    protected $user;
+    protected $users = [];
 
     /**
      * Đã đếm số user cho từ role
@@ -40,17 +40,21 @@ class Manager
 
     /**
      * Authority của user hiện tại
-     * Sử dụng: Authority::user()->is('sys.admin')
+     * Ví dụ sử dụng: Authority::user()->is('sys.admin')
      *
-     * @return User
+     * @param int|\Minhbang\User\User $id
+     *
+     * @return \Minhbang\Authority\User
      */
-    public function user()
+    public function user($id = null)
     {
-        if ($this->user) {
-            $this->user = new User();
+        $user = user_model($id);
+        abort_if(is_null($user), 500, 'User model not found!');
+        if (empty($this->users[$user->id])) {
+            $this->users[$user->id] = new User($user);
         }
 
-        return $this->user;
+        return $this->users[$user->id];
     }
 
     /**

@@ -27,9 +27,14 @@ class User
      */
     protected $new_roles = [];
 
-    public function __construct()
+    /**
+     * User constructor.
+     *
+     * @param \Minhbang\User\User $user
+     */
+    public function __construct($user)
     {
-        $this->entity = auth()->user();
+        $this->entity = $user;
     }
 
     /**
@@ -37,7 +42,7 @@ class User
      * $roles string: có thể nhiều roles phân cách bằng dấu ',' hoặc '|'
      *
      * @param string|array $roles
-     * @param bool $all Được gán tất cả các $roles hay chỉ cần 1
+     * @param bool $all   Được gán tất cả các $roles hay chỉ cần 1
      * @param bool $exact Chính xác hay kế thừa
      *
      * @return bool
@@ -113,6 +118,8 @@ class User
         $this->roles()->contains(function ($role) use ($id, $not_exact) {
             return str_is($id, $role) || ($not_exact && authority()->role($id)->superiorOf($role));
         });
+
+        return false;
     }
 
     /**
@@ -122,12 +129,22 @@ class User
      */
     public function roles()
     {
-        DB::table('role_user')
+        return DB::table('role_user')
             ->where('user_id', '=', $this->entity->id)
             ->select('role_group', 'role_name')->get()
             ->map(function ($role) {
                 return "{$role->role_group}.{$role->role_name}";
             });
+    }
+
+    /**
+     * @return string[]
+     */
+    public function roleTitles()
+    {
+        return $this->roles()->map(function ($role) {
+            return trans("authority::role.$role");
+        })->toArray();
     }
 
     /**

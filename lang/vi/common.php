@@ -4,7 +4,7 @@ return [
     'manage'                  => 'Quản lý Chức vụ',
     'list'                    => 'Danh sách chức vụ',
     'level'                   => 'Level',
-    'note'                    => 'Chức vụ có Level cao hơn sẽ "kế thừa" tât cả "quyền" các chức vụ level thấp trong cùng "Nhóm"...',
+    'note'                    => 'Chức vụ có Level cao hơn sẽ "kế thừa" tất cả "quyền" các chức vụ level thấp trong cùng "Nhóm"...',
     'add_user'                => 'Thêm User',
     'attached'                => 'Đã giao',
     'attached_users'          => 'Users Đã giao',

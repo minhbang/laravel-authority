@@ -50,9 +50,9 @@ class RoleController extends BackendController
     {
         $role = $this->getRole($id);
         $this->buildHeading(
-            [trans('authority::role.manage') . ':', $role->full_title],
+            [trans('authority::common.manage') . ':', $role->full_title],
             'fa-male',
-            [route('backend.role.index') => trans('authority::role.roles'), '#' => $role->full_title]
+            [route('backend.role.index') => trans('authority::common.roles'), '#' => $role->full_title]
         );
         // Tất cả users đã được gán role này
         $users = $role->users();

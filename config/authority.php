@@ -12,7 +12,7 @@ return [
     ],
 
     'middlewares' => [
-        'role' => ['web', 'sys.sadmin'],
+        'role' => ['web', 'role:sys.sadmin'],
     ],
     /**
      * Định nghĩa các chức vụ

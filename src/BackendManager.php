@@ -29,6 +29,7 @@ class BackendManager
             $this->data['countUsers'][$group] = [];
             foreach ($roles as $name => $level) {
                 $this->data['roles'][$group][$name] = new Role("{$group}.{$name}", $level);
+                $this->data['countUsers'][$group][$name] = null;
             }
         }
 
@@ -37,7 +38,7 @@ class BackendManager
             ->groupBy('role_group', 'role_name')
             ->get();
         foreach ($counted as $count) {
-            if (isset($this->data['countUsers'][$count->role_group][$count->role_name])) {
+            if (isset($this->data['roles'][$count->role_group][$count->role_name])) {
                 $this->data['countUsers'][$count->role_group][$count->role_name] = $count->user_count;
             }
         }

@@ -18,7 +18,7 @@
                 @foreach($roles as $group => $items)
                     <tr>
                         <td colspan="4" class="text-uppercase text-primary bg-warning">
-                            <strong>{{trans("authority::common.{$group}.title")}}</strong>
+                            <strong>{{trans("authority::role.{$group}.title")}}</strong>
                         </td>
                     </tr>
                     <?php $i = 1; ?>
