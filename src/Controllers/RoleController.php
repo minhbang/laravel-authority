@@ -1,10 +1,12 @@
 <?php
+
 namespace Minhbang\Authority\Controllers;
 
 use Minhbang\Authority\BackendManager;
 use Minhbang\Authority\Role;
 use Minhbang\Kit\Extensions\BackendController;
 use Minhbang\User\User;
+use Authority;
 
 /**
  * Class RoleController
@@ -50,7 +52,7 @@ class RoleController extends BackendController
     {
         $role = $this->getRole($id);
         $this->buildHeading(
-            [trans('authority::common.manage') . ':', $role->full_title],
+            [trans('authority::common.roles') . ':', $role->full_title],
             'fa-male',
             [route('backend.role.index') => trans('authority::common.roles'), '#' => $role->full_title]
         );
@@ -59,10 +61,17 @@ class RoleController extends BackendController
         // 10 users khác chưa gán $role
         $selectize_users = User::forSelectize($users->pluck('id'), 10)->get()->all();
 
-        return view('authority::role.show', compact('role', 'users', 'selectize_users'));
+        // Permissions
+        $attached_permissions = Authority::permission()->attachedTo($role);
+        $permissions = $attached_permissions->groupByModel();
+        $selectize_permissions = Authority::permission()->except($attached_permissions->keys()->all())->groupByModel();
+
+        return view('authority::role.show',
+            compact('role', 'users', 'selectize_users', 'permissions', 'selectize_permissions'));
     }
 
     // User Manage ----------------------------------------------------
+
     /**
      * @param string $id
      * @param \Minhbang\User\User $user
@@ -76,7 +85,7 @@ class RoleController extends BackendController
         return response()->json(
             [
                 'type'    => 'success',
-                'content' => trans('authority::role.attach_user_success'),
+                'content' => trans('authority::common.attach_user_success'),
             ]
         );
     }
@@ -94,7 +103,7 @@ class RoleController extends BackendController
         return response()->json(
             [
                 'type'    => 'success',
-                'content' => trans('authority::role.detach_user_success'),
+                'content' => trans('authority::common.detach_user_success'),
             ]
         );
     }
@@ -111,7 +120,62 @@ class RoleController extends BackendController
         return response()->json(
             [
                 'type'    => 'success',
-                'content' => trans('authority::role.detach_all_user_success'),
+                'content' => trans('authority::common.detach_all_user_success'),
+            ]
+        );
+    }
+
+    // Permission Manage ----------------------------------------------------
+
+    /**
+     * @param string $id
+     * @param string $permission_id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function attachPermission($id, $permission_id)
+    {
+        $this->getRole($id)->attachPermission($permission_id);
+
+        return response()->json(
+            [
+                'type'    => 'success',
+                'content' => trans('authority::common.attach_permission_success'),
+            ]
+        );
+    }
+
+    /**
+     * @param string $id
+     * @param string $permission_id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function detachPermission($id, $permission_id)
+    {
+        $this->getRole($id)->detachPermission($permission_id);
+
+        return response()->json(
+            [
+                'type'    => 'success',
+                'content' => trans('authority::common.detach_permission_success'),
+            ]
+        );
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function detachAllPermission($id)
+    {
+        $this->getRole($id)->detachPermission();
+
+        return response()->json(
+            [
+                'type'    => 'success',
+                'content' => trans('authority::common.detach_all_permission_success'),
             ]
         );
     }

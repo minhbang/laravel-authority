@@ -1,4 +1,5 @@
 <?php
+
 namespace Minhbang\Authority;
 
 /**
@@ -8,6 +9,10 @@ namespace Minhbang\Authority;
  */
 class Manager
 {
+    /**
+     * @var PermissionManager
+     */
+    protected $permissionManager;
     /**
      * Cache danh sách Role object, ['name' => Role]
      *
@@ -67,6 +72,9 @@ class Manager
      */
     public function role($id)
     {
+        if (!is_string($id)) {
+            return $id;
+        }
         if (empty($this->roles[$id])) {
             $level = config("authority.roles.$id");
             abort_unless($level && $this->validate($id), 500, "Error: Undefined Role $id !");
@@ -78,13 +86,27 @@ class Manager
     }
 
     /**
+     * @param string $name
+     *
+     * @return \Minhbang\Authority\PermissionManager|array
+     */
+    public function permission($name = null)
+    {
+        if (is_null($this->permissionManager)) {
+            $this->permissionManager = new PermissionManager();
+        }
+
+        return is_null($name) ? $this->permissionManager : $this->permissionManager->getOrFail($name);
+    }
+
+    /**
      * @param $id
      *
      * @return boolean
      */
     public function definedRole($id)
     {
-        return config("authority.roles.$id");
+        return !is_null(config("authority.roles.$id"));
     }
 
     /**

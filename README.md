@@ -1,5 +1,6 @@
 # Laravel Authorization
-Quản lý Role - Permission của User
+* Quản lý Role - Permission của User
+* Trả lời câu hỏi: **User** có được phép thực hiện **Action** đối với **Model** không?
 
 ## Install
 

@@ -17,6 +17,15 @@ Route::group(
                         Route::delete('/', ['as' => 'detach_all', 'uses' => 'RoleController@detachAllUser']);
                     }
                 );
+                // Link Permission
+                Route::group(
+                    ['prefix' => '{role}/permission', 'as' => 'permission.'],
+                    function () {
+                        Route::post('{permission}', ['as' => 'attach', 'uses' => 'RoleController@attachPermission']);
+                        Route::delete('{permission}', ['as' => 'detach', 'uses' => 'RoleController@detachPermission']);
+                        Route::delete('/', ['as' => 'detach_all', 'uses' => 'RoleController@detachAllPermission']);
+                    }
+                );
             }
         );
     }

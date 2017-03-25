@@ -1,16 +1,16 @@
 <?php
 return [
     // Định nghĩa menus cho authority
-    'menus' => [
+    'menus'       => [
         'backend.sidebar.user.role' => [
             'priority' => 3,
             'url'      => 'route:backend.role.index',
-            'label'    => 'trans:user::role.roles',
+            'label'    => 'trans:authority::common.roles',
             'icon'     => 'fa-male',
             'active'   => 'backend/role*',
         ],
     ],
-
+    // Ai được phép thay đổi các chính sách phân quyền
     'middlewares' => [
         'role' => ['web', 'role:sys.sadmin'],
     ],
@@ -25,7 +25,9 @@ return [
     'roles'       => [
         // hệ thống
         'sys' => [
+            // Super Admin
             'sadmin' => 200,
+            // Admin
             'admin'  => 100,
         ],
     ],

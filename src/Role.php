@@ -1,8 +1,10 @@
 <?php
+
 namespace Minhbang\Authority;
 
 use DB;
 use Minhbang\User\User;
+use Authority;
 
 /**
  * Class Role
@@ -13,24 +15,13 @@ use Minhbang\User\User;
 class Role
 {
     /**
-     * Là cấp trên của role $id, cùng nhóm và có level cao hơn
-     *
-     * @param string $id
-     *
-     * @return boolean
-     */
-    public function superiorOf($id)
-    {
-        $that = authority()->role($id);
-
-        return ($this->group === $that->group) && ($this->level > $that->level);
-    }
-
-    /**
      * @var string
      */
     protected $table = 'role_user';
-
+    /**
+     * @var string
+     */
+    protected $table_permission = 'permission_role';
     /**
      * Cache danh sách users đã được gán role này
      *
@@ -86,6 +77,19 @@ class Role
     protected $attributes = ['id', 'group', 'group_title', 'name', 'title', 'full_title', 'level', 'url'];
 
     /**
+     * Cache
+     *
+     * @var \Illuminate\Support\Collection
+     */
+    protected $allPermissions;
+    /**
+     * Cache
+     *
+     * @var \Illuminate\Support\Collection
+     */
+    protected $immediatePermissions;
+
+    /**
      * Role constructor.
      *
      * @param string $id
@@ -100,6 +104,38 @@ class Role
         $this->group_title = trans("authority::role.{$this->group}.title");
         $this->full_title = "{$this->title} ({$this->group_title})";
         $this->url = route('backend.role.show', ['role' => $this->id]);
+    }
+
+    /**
+     * Là cấp trên của role $id, cùng nhóm và có level cao hơn
+     *
+     * @param string $id
+     *
+     * @return boolean
+     */
+    public function isSuperiorOf($id)
+    {
+        $that = authority()->role($id);
+
+        return ($this->group === $that->group) && ($this->level > $that->level);
+    }
+
+    /**
+     * Danh sách roles cùng group, level thấp hơn
+     *
+     * @return static[]
+     */
+    public function inferiorities()
+    {
+        $result = [];
+        $roles = config("authority.roles.{$this->group}");
+        foreach ($roles as $name => $level) {
+            if ($level < $this->level) {
+                $result[] = Authority::role($this->group . '.' . $name);
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -119,6 +155,63 @@ class Role
 
         return $this->users;
     }
+
+    /**
+     * Danh sách permissions đã cấp cho role này, $immediate =
+     * - true:  Các permissions được cấp trực tiếp
+     * - false: Bao gồm các permissions đã cấp cho các role "cùng group, level thấp hơn"
+     *
+     * @param bool $immediate
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function permissions($immediate = false)
+    {
+        return $immediate ? $this->immediatePermissions() : $this->allPermissions();
+    }
+
+    /**
+     * @param string $id
+     * @param bool $immediate
+     *
+     * @return bool
+     */
+    public function hasPermission($id, $immediate = false)
+    {
+        return $this->permissions($immediate)->contains('permission_id', $id);
+    }
+
+    /**
+     * Danh sách tất cả permissions được cấp
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function allPermissions()
+    {
+        if (is_null($this->allPermissions)) {
+            $this->allPermissions = $this->immediatePermissions();
+            foreach ($this->inferiorities() as $role) {
+                $this->allPermissions->merge($role->immediatePermissions());
+            }
+        }
+
+        return $this->allPermissions;
+    }
+
+    /**
+     * Các permissions được cấp trực tiếp cho role
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function immediatePermissions()
+    {
+        if (is_null($this->immediatePermissions)) {
+            $this->immediatePermissions = DB::table('permission_role')->where('role_id', $this->id)->get();
+        }
+
+        return $this->immediatePermissions;
+    }
+
 
     /**
      * Đếm số users đã được gán role này
@@ -165,11 +258,40 @@ class Role
      */
     public function detachUser($user_id = null)
     {
-        $query = DB::table($this->table)
-            ->where("{$this->table}.role_group", '=', $this->group)
-            ->where("{$this->table}.role_name", '=', $this->name);
+        $query = DB::table($this->table)->where('role_group', $this->group)->where('role_name', $this->name);
         if ($user_id) {
             $query->where('user_id', '=', $user_id);
+        }
+
+        return $query->delete();
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return bool
+     */
+    public function attachPermission($id)
+    {
+        return $this->hasPermission($id, true) ||
+            (
+                Authority::permission()->has($id) &&
+                DB::table($this->table_permission)->insert(['permission_id' => $id, 'role_id' => $this->id])
+            );
+    }
+
+    /**
+     * Không có permission -> detach all permissions
+     *
+     * @param string $id
+     *
+     * @return bool
+     */
+    public function detachPermission($id = null)
+    {
+        $query = DB::table($this->table_permission)->where('role_id', $this->id);
+        if ($id) {
+            $query->where('permission_id', $id);
         }
 
         return $query->delete();
@@ -197,5 +319,4 @@ class Role
     {
         return $this->get($name);
     }
-
 }

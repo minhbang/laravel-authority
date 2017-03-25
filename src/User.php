@@ -1,7 +1,9 @@
 <?php
+
 namespace Minhbang\Authority;
 
 use DB;
+use Authority;
 
 /**
  * Class User
@@ -18,14 +20,9 @@ class User
     /**
      * Cached roles
      *
-     * @var array
+     * @var \Illuminate\Support\Collection
      */
     protected $roles;
-
-    /**
-     * @var array
-     */
-    protected $new_roles = [];
 
     /**
      * User constructor.
@@ -116,7 +113,7 @@ class User
         $not_exact = !$exact && authority()->validate($id);
         // được gán TRỰC TIẾP || được gán role cùng group nhưng level cao hơn $role
         $this->roles()->contains(function ($role) use ($id, $not_exact) {
-            return str_is($id, $role) || ($not_exact && authority()->role($id)->superiorOf($role));
+            return str_is($id, $role) || ($not_exact && authority()->role($id)->isSuperiorOf($role));
         });
 
         return false;
@@ -129,12 +126,17 @@ class User
      */
     public function roles()
     {
-        return DB::table('role_user')
-            ->where('user_id', '=', $this->entity->id)
-            ->select('role_group', 'role_name')->get()
-            ->map(function ($role) {
-                return "{$role->role_group}.{$role->role_name}";
-            });
+        if (is_null($this->roles)) {
+            $this->roles = DB::table('role_user')
+                ->where('user_id', '=', $this->entity->id)
+                ->select('role_group', 'role_name')
+                ->get()
+                ->map(function ($role) {
+                    return "{$role->role_group}.{$role->role_name}";
+                });
+        }
+
+        return $this->roles;
     }
 
     /**
@@ -167,73 +169,24 @@ class User
         return $this->isSuperAdmin() || $this->isOne('sys.admin');
     }
 
-
     /**
-     * Setter $this->roles = $value
+     * Có được được phép thự hiện permission
      *
-     * @param array $value
-     */
-    /*public function setRolesAttribute($value)
-    {
-        $this->new_roles = (array)$value;
-    }*/
-
-    /*public function syncNewRoles()
-    {
-        if ($this->new_roles) {
-            foreach ($this->new_roles as $role) {
-                $this->attachRole($role);
-            }
-        }
-    }*/
-
-    /**
-     * Role $attribute cao nhất từ danh sách $roles mà user được gán
-     *
-     * @param array $lists Danh sách role ID cần test
-     * @param null $user_id
-     * @param string $attribute
-     *
-     * @return null|string
-     */
-    /*public function topRole($lists = [], $user_id = null, $attribute = 'title')
-    {
-        $roles = $this->getUserRoles($user_id ?: user('id'));
-        foreach ($lists as $role) {
-            if (in_array($role, $roles)) {
-                return $this->roles("{$role}.{$attribute}");
-            }
-        }
-
-        return null;
-    }*/
-
-    /**
-     * @param string $group
-     * @param string $name
+     * @param string $permission_id
      *
      * @return bool
      */
-    /*public function attachRole($group, $name = null)
+    public function can($permission_id)
     {
-        if (is_null($name)) {
-            list($group, $name) = explode('.', $group, 2);
+        if ($this->isSuperAdmin()) {
+            return true;
         }
-        $level = config("user.roles.{$group}.{$name}");
-        if (!$level || !$this->exists) {
-            return false;
-        } else {
-            if (DB::table('role_user')
-                ->where('user_id', $this->id)
-                ->where('role_group', $group)
-                ->where('role_name', $name)
-                ->count()
-            ) {
+        foreach ($this->roles() as $id) {
+            if (Authority::role($id)->permissions()->contains($permission_id)) {
                 return true;
-            } else {
-                return DB::table('role_user')
-                    ->insert(['user_id' => $this->id, 'role_group' => $group, 'role_name' => $name]);
             }
         }
-    }*/
+
+        return false;
+    }
 }

@@ -4,11 +4,12 @@
         <div class="col-md-6">
             <div class="ibox ibox-table">
                 <div class="ibox-title">
-                    <h5>{!! trans('authority::common.attached_users') !!}</h5>
-                    <div class="ibox-tools">
-                        <a id="detach-all-user" href="{{route('backend.role.user.detach_all', ['role' => $role->id])}}"
+                    <h5><i class="fa fa-users"></i> {!! trans('authority::common.attached_users') !!}</h5>
+                    <div class="buttons">
+                        <a id="detach-all-user"
+                           href="{{route('backend.role.user.detach_all', ['role' => $role->id])}}"
                            class="btn btn-danger btn-xs">
-                            <span class="fa fa-remove"></span> {{trans('authority::common.detach_all')}}
+                            <i class="fa fa-remove"></i> {{trans('authority::common.detach_all')}}
                         </a>
                     </div>
                 </div>
@@ -20,7 +21,7 @@
                                 {!! Form::select('user_id', [], null, ['id' => 'user_id', 'class' => 'form-control select-user', 'placeholder' => trans('user::user.select_user').'...']) !!}
                                 <a id="attach-user"
                                    href="{{route('backend.role.user.attach', ['role' => $role->id, 'user' => '__ID__'])}}"
-                                   class="btn btn-primary btn-block disabled"><i
+                                   class="btn btn-danger btn-block disabled"><i
                                             class="fa fa-plus"></i> {{trans('authority::common.attach')}}
                                 </a>
                             </div>
@@ -58,6 +59,68 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-6">
+            <div class="ibox ibox-table">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-check"></i> {!! trans('authority::common.attached_permissions') !!}</h5>
+                    <div class="buttons">
+                        <a id="detach-all-permission"
+                           href="{{route('backend.role.permission.detach_all', ['role' => $role->id])}}"
+                           class="btn btn-warning btn-xs">
+                            <i class="fa fa-remove"></i> {{trans('authority::common.detach_all')}}
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal form-1-line">
+                        <div class="form-group">
+                            {!! Form::label('permission_id', trans('authority::common.add_permission'), ['class' => 'col-xs-4 control-label']) !!}
+                            <div class="col-xs-8">
+                                {!! Form::select('permission_id', $selectize_permissions, null, ['id' => 'permission_id', 'class' => 'form-control', 'placeholder' => trans('authority::common.select_permission').'...']) !!}
+                                <a id="attach-permission"
+                                   href="{{route('backend.role.permission.attach', ['role' => $role->id, 'permission' => '__ID__'])}}"
+                                   class="btn btn-warning btn-block disabled">
+                                    <i class="fa fa-plus"></i> {{trans('common.add')}}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-hover table-striped table-bordered table-detail table-permissions">
+                        <thead>
+                        <tr>
+                            <th class="min-width">#</th>
+                            <th>{{trans('common.actions')}}</th>
+                            <th class="min-width"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php $i = 1; ?>
+                        @foreach($permissions as $model => $actions)
+                            <tr>
+                                <td></td>
+                                <td colspan="2" class="text-uppercase text-info">{{$model}}</td>
+                            </tr>
+                            @foreach($actions as $id => $title)
+                                <tr>
+                                    <td>{{$i}}</td>
+                                    <td><strong>{{$id}}</strong><span class="text-danger"> — {{$title}}</span></td>
+                                    <td>
+                                        <a href="{{route('backend.role.permission.detach', ['role' => $role->id, 'permission' => $id])}}"
+                                           class="detach-permission text-danger"
+                                           data-toggle="tooltip"
+                                           data-title="{{trans('authority::common.detach')}}">
+                                            <i class="fa fa-remove"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <?php $i++; ?>
+                            @endforeach
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -67,33 +130,24 @@
         $.fn.mbHelpers.reloadPage = function () {
             location.reload(true);
         };
-        let user_id = $('#user_id'),
-            attach_user = $('#attach-user');
-        user_id.selectize_user({
-            url: '{!! route('backend.user.select', ['query' => '__QUERY__']) !!}',
-            users: {!! json_encode($selectize_users) !!},
-            onChange: function (value) {
-                if (value) {
-                    attach_user.removeClass('disabled');
-                } else {
-                    attach_user.addClass('disabled');
-                }
-            }
-        });
-        attach_user.click(function (e) {
-            e.preventDefault();
-            let id = user_id.val(),
-                url = attach_user.attr('href');
-            if (attach_user.hasClass('disabled') || id <= 0) {
-                return;
-            }
-            $.post(url.replace('__ID__', id), {_token: window.Laravel.csrfToken}, function (data) {
-                $.fn.mbHelpers.showMessage(data.type, data.content);
-                $.fn.mbHelpers.reloadPage();
-            }, 'json');
-        });
+        function updateState(element, enable) {
+            enable ? $(element).removeClass('disabled') : $(element).addClass('disabled');
+        }
 
-        function detach_action(element, message, title, ids) {
+        function attach(event, element, input) {
+            event.preventDefault();
+            let id = input.val(),
+                url = $(element).attr('href');
+            if (id && !$(element).hasClass('disabled')) {
+                $.post(url.replace('__ID__', id), {_token: window.Laravel.csrfToken}, function (data) {
+                    $.fn.mbHelpers.showMessage(data.type, data.content);
+                    $.fn.mbHelpers.reloadPage();
+                }, 'json');
+            }
+        }
+
+        function detach(event, element, message, title, ids) {
+            event.preventDefault();
             let _this = $(element);
             ids = ids || '';
             _this.tooltip('hide');
@@ -121,72 +175,74 @@
             });
         }
 
+        // User actions
+        let user_id = $('#user_id'),
+            attach_user = $('#attach-user');
+        user_id.selectize_user({
+            url: '{!! route('backend.user.select', ['query' => '__QUERY__']) !!}',
+            users: {!! json_encode($selectize_users) !!},
+            onChange: function (value) {
+                updateState(attach_user, value);
+            }
+        });
+
+        attach_user.click(function (e) {
+            attach(e, this, user_id);
+        });
+
         $('a.detach-user').click(function (e) {
-            e.preventDefault();
-            detach_action(
+            detach(
+                e,
                 this,
                 '{{trans("authority::common.detach_user_confirm")}}',
                 '{{trans("authority::common.detach_user")}}'
             );
         });
-
         $('#detach-all-user').click(function (e) {
-            e.preventDefault();
-            detach_action(
+            detach(
+                e,
                 this,
                 '{{trans("authority::common.detach_all_user_confirm")}}',
                 '{{trans("authority::common.detach_all")}}'
             );
         });
 
-        $('#sync-permission').click(function (e) {
-            e.preventDefault();
-            let _this = $(this);
-            _this.tooltip('hide');
-            $.post(_this.attr('href'), {_token: window.Laravel.csrfToken}, function (data) {
-                $.fn.mbHelpers.showMessage(data.type, data.content);
-                $.fn.mbHelpers.reloadPage();
-            }, 'json');
-        });
-
-        $('.attach-permission').click(function (e) {
-            e.preventDefault();
-            let _this = $(this),
-                ids = [];
-            _this.tooltip('hide');
-            _this.parents('tr').find('input[type="checkbox"]:checked').each(function () {
-                ids.push($(this).data('id'));
-            });
-            if (ids.length) {
-                $.post(_this.attr('href').replace('__IDS__', ids.join(',')), {_token: window.Laravel.csrfToken}, function (data) {
-                    $.fn.mbHelpers.showMessage(data.type, data.content);
-                    $.fn.mbHelpers.reloadPage();
-                }, 'json');
+        // Permission actions
+        let permission_id = $('#permission_id'),
+            attach_permission = $('#attach-permission');
+        ;
+        permission_id.selectize({
+            persist: false,
+            create: false,
+            createOnBlur: false,
+            searchField: ['text', 'value'],
+            render: {
+                option: function (item) {
+                    return '<div><strong>' + item.value + '</strong><span class="text-danger"> — ' + item.text + '</span>' + '</div>';
+                },
+                item: function (item) {
+                    return '<div><strong>' + item.value + '</strong><span class="text-danger"> — ' + item.text + ' ' + item.optgroup + '</span>' + '</div>';
+                }
+            },
+            onChange: function (value) {
+                updateState(attach_permission, value);
             }
         });
 
+        attach_permission.click(function (e) {
+            attach(e, this, permission_id);
+        });
         $('a.detach-permission').click(function (e) {
-            e.preventDefault();
-            let _this = $(this),
-                ids = [];
-            _this.parents('tr').find('input[type="checkbox"]:checked').each(function () {
-                ids.push($(this).data('id'));
-            });
-            if (ids.length) {
-                detach_action(
-                    this,
-                    '{{trans("authority::common.detach_permission_confirm")}}',
-                    '{{trans("authority::common.detach_permission")}}',
-                    ids.join(',')
-                );
-            } else {
-                _this.tooltip('hide');
-            }
+            detach(
+                e,
+                this,
+                '{{trans("authority::common.detach_permission_confirm")}}',
+                '{{trans("authority::common.detach_permission")}}'
+            );
         });
-
         $('#detach-all-permission').click(function (e) {
-            e.preventDefault();
-            detach_action(
+            detach(
+                e,
                 this,
                 '{{trans("authority::common.detach_all_permission_confirm")}}',
                 '{{trans("authority::common.detach_all")}}'
