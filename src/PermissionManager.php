@@ -47,7 +47,7 @@ class PermissionManager extends Collection
     {
         $permission = [];
         $permission['title'] = $title ?: "trans::authority::permission.{$action}";
-        $permission['class'] = Kit::className($model);
+        $permission['class'] = Kit::getClass($model);
         $permission['alias'] = Kit::alias($model);
         $permission['action'] = $action;
         $permission['id'] = $permission['alias'] . '.' . $permission['action'];

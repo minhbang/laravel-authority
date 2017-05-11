@@ -12,8 +12,7 @@ use Authority;
  *
  * @package Minhbang\Authority
  */
-class Role
-{
+class Role {
     /**
      * @var string
      */
@@ -32,7 +31,7 @@ class Role
     /**
      * @var int
      */
-    protected $count_users = -1;
+    protected $count_users = - 1;
 
     /**
      * @var string
@@ -74,7 +73,7 @@ class Role
     protected $url;
 
     // Danh sách các thuộc tính được phép getter
-    protected $attributes = ['id', 'group', 'group_title', 'name', 'title', 'full_title', 'level', 'url'];
+    protected $attributes = [ 'id', 'group', 'group_title', 'name', 'title', 'full_title', 'level', 'url' ];
 
     /**
      * Cache
@@ -95,15 +94,14 @@ class Role
      * @param string $id
      * @param int $level
      */
-    public function __construct($id, $level)
-    {
+    public function __construct( $id, $level ) {
         $this->id = $id;
-        list($this->group, $this->name) = explode('.', $id);
+        list( $this->group, $this->name ) = explode( '.', $id );
         $this->level = $level;
-        $this->title = trans("authority::role.{$this->id}");
-        $this->group_title = trans("authority::role.{$this->group}.title");
+        $this->title = trans( "authority::role.{$this->id}" );
+        $this->group_title = trans( "authority::role.{$this->group}.title" );
         $this->full_title = "{$this->title} ({$this->group_title})";
-        $this->url = route('backend.role.show', ['role' => $this->id]);
+        $this->url = route( 'backend.role.show', [ 'role' => $this->id ] );
     }
 
     /**
@@ -113,11 +111,10 @@ class Role
      *
      * @return boolean
      */
-    public function isSuperiorOf($id)
-    {
-        $that = authority()->role($id);
+    public function isSuperiorOf( $id ) {
+        $that = authority()->role( $id );
 
-        return ($this->group === $that->group) && ($this->level > $that->level);
+        return ( $this->group === $that->group ) && ( $this->level > $that->level );
     }
 
     /**
@@ -125,13 +122,12 @@ class Role
      *
      * @return static[]
      */
-    public function inferiorities()
-    {
+    public function inferiorities() {
         $result = [];
-        $roles = config("authority.roles.{$this->group}");
-        foreach ($roles as $name => $level) {
-            if ($level < $this->level) {
-                $result[] = Authority::role($this->group . '.' . $name);
+        $roles = config( "authority.roles.{$this->group}" );
+        foreach ( $roles as $name => $level ) {
+            if ( $level < $this->level ) {
+                $result[] = Authority::role( $this->group . '.' . $name );
             }
         }
 
@@ -143,14 +139,13 @@ class Role
      *
      * @return \Minhbang\User\User[]|\Illuminate\Database\Eloquent\Collection
      */
-    public function users()
-    {
-        if (is_null($this->users)) {
-            $this->users = User::with('group')
-                ->leftJoin($this->table, "{$this->table}.user_id", '=', 'users.id')
-                ->where("{$this->table}.role_group", '=', $this->group)
-                ->where("{$this->table}.role_name", '=', $this->name)
-                ->select('users.*')->get();
+    public function users() {
+        if ( is_null( $this->users ) ) {
+            $this->users = User::with( 'group' )
+                               ->leftJoin( $this->table, "{$this->table}.user_id", '=', 'users.id' )
+                               ->where( "{$this->table}.role_group", '=', $this->group )
+                               ->where( "{$this->table}.role_name", '=', $this->name )
+                               ->select( 'users.*' )->get();
         }
 
         return $this->users;
@@ -165,8 +160,7 @@ class Role
      *
      * @return \Illuminate\Support\Collection
      */
-    public function permissions($immediate = false)
-    {
+    public function permissions( $immediate = false ) {
         return $immediate ? $this->immediatePermissions() : $this->allPermissions();
     }
 
@@ -176,9 +170,8 @@ class Role
      *
      * @return bool
      */
-    public function hasPermission($id, $immediate = false)
-    {
-        return $this->permissions($immediate)->contains('permission_id', $id);
+    public function hasPermission( $id, $immediate = false ) {
+        return $this->permissions( $immediate )->contains( 'permission_id', $id );
     }
 
     /**
@@ -186,12 +179,11 @@ class Role
      *
      * @return \Illuminate\Support\Collection
      */
-    public function allPermissions()
-    {
-        if (is_null($this->allPermissions)) {
+    public function allPermissions() {
+        if ( is_null( $this->allPermissions ) ) {
             $this->allPermissions = $this->immediatePermissions();
-            foreach ($this->inferiorities() as $role) {
-                $this->allPermissions->merge($role->immediatePermissions());
+            foreach ( $this->inferiorities() as $role ) {
+                $this->allPermissions->merge( $role->immediatePermissions() );
             }
         }
 
@@ -203,10 +195,9 @@ class Role
      *
      * @return \Illuminate\Support\Collection
      */
-    public function immediatePermissions()
-    {
-        if (is_null($this->immediatePermissions)) {
-            $this->immediatePermissions = DB::table('permission_role')->where('role_id', $this->id)->get();
+    public function immediatePermissions() {
+        if ( is_null( $this->immediatePermissions ) ) {
+            $this->immediatePermissions = DB::table( 'permission_role' )->where( 'role_id', $this->id )->get();
         }
 
         return $this->immediatePermissions;
@@ -218,9 +209,8 @@ class Role
      *
      * @return int
      */
-    public function countUsers()
-    {
-        if ($this->count_users < 0) {
+    public function countUsers() {
+        if ( $this->count_users < 0 ) {
             $this->count_users = $this->users()->count();
         }
 
@@ -230,8 +220,7 @@ class Role
     /**
      * @param int $value
      */
-    public function setCountUsers($value)
-    {
+    public function setCountUsers( $value ) {
         $this->count_users = $value;
     }
 
@@ -240,12 +229,11 @@ class Role
      *
      * @return bool
      */
-    public function attachUser($user_id)
-    {
-        return in_array($user_id, $this->users()->pluck('id')->all()) ?
+    public function attachUser( $user_id ) {
+        return in_array( $user_id, $this->users()->pluck( 'id' )->all() ) ?
             true :
-            DB::table($this->table)->insert(
-                ['user_id' => $user_id, 'role_group' => $this->group, 'role_name' => $this->name]
+            DB::table( $this->table )->insert(
+                [ 'user_id' => $user_id, 'role_group' => $this->group, 'role_name' => $this->name ]
             );
     }
 
@@ -256,11 +244,10 @@ class Role
      *
      * @return bool
      */
-    public function detachUser($user_id = null)
-    {
-        $query = DB::table($this->table)->where('role_group', $this->group)->where('role_name', $this->name);
-        if ($user_id) {
-            $query->where('user_id', '=', $user_id);
+    public function detachUser( $user_id = null ) {
+        $query = DB::table( $this->table )->where( 'role_group', $this->group )->where( 'role_name', $this->name );
+        if ( $user_id ) {
+            $query->where( 'user_id', '=', $user_id );
         }
 
         return $query->delete();
@@ -271,13 +258,12 @@ class Role
      *
      * @return bool
      */
-    public function attachPermission($id)
-    {
-        return $this->hasPermission($id, true) ||
-            (
-                Authority::permission()->has($id) &&
-                DB::table($this->table_permission)->insert(['permission_id' => $id, 'role_id' => $this->id])
-            );
+    public function attachPermission( $id ) {
+        return $this->hasPermission( $id, true ) ||
+               (
+                   Authority::permission()->has( $id ) &&
+                   DB::table( $this->table_permission )->insert( [ 'permission_id' => $id, 'role_id' => $this->id ] )
+               );
     }
 
     /**
@@ -287,11 +273,10 @@ class Role
      *
      * @return bool
      */
-    public function detachPermission($id = null)
-    {
-        $query = DB::table($this->table_permission)->where('role_id', $this->id);
-        if ($id) {
-            $query->where('permission_id', $id);
+    public function detachPermission( $id = null ) {
+        $query = DB::table( $this->table_permission )->where( 'role_id', $this->id );
+        if ( $id ) {
+            $query->where( 'permission_id', $id );
         }
 
         return $query->delete();
@@ -305,9 +290,8 @@ class Role
      *
      * @return mixed
      */
-    public function get($name, $default = null)
-    {
-        return in_array($name, $this->attributes) ? $this->{$name} : $default;
+    public function get( $name = null, $default = null ) {
+        return is_null( $name ) ? $this : ( in_array( $name, $this->attributes ) ? $this->{$name} : $default );
     }
 
     /**
@@ -315,8 +299,7 @@ class Role
      *
      * @return null|string
      */
-    function __get($name)
-    {
-        return $this->get($name);
+    function __get( $name ) {
+        return $this->get( $name );
     }
 }
