@@ -25,8 +25,6 @@ return [
     'roles'       => [
         // hệ thống
         'sys' => [
-            // Super Admin
-            'sadmin' => 200,
             // Admin
             'admin'  => 100,
         ],
@@ -35,6 +33,6 @@ return [
      * Định nghĩa các nhóm chức vụ, nhóm 1 số roles để ghi ngắn gọn (có nghĩa)
      */
     'role_groups' => [
-        'administrator' => ['sys.sadmin', 'sys.admin'],
+        'administrator' => ['sys.admin'],
     ],
 ];

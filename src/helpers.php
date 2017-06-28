@@ -20,6 +20,6 @@ if (!function_exists('user_is')) {
      */
     function user_is($role, $all = false, $exact = false)
     {
-        return app('authority')->user()->is($role, $all, $exact);
+        return user_model(null, false) && app('authority')->user()->is($role, $all, $exact);
     }
 }

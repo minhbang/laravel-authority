@@ -106,7 +106,7 @@ class User {
     /**
      * Kiểm tra $user có role $id.
      * - Có thể sử dụng * (xem https://laravel.com/docs/5.4/helpers#method-str-is), vd: 'bgh.*' tất cả role thuộc group Ban giám hiệu
-     * - Mặc định kiểm tra KHÔNG 'chính xác'(kế thường), được gán role có level cao hơn sẽ có các role level thấp cùng group
+     * - Mặc định kiểm tra KHÔNG 'chính xác'(kế thừa), được gán role có level cao hơn sẽ có các role level thấp cùng group
      * ==> Kiểm tra không chính xác chỉ thực hiện khi role $id có dạng 'group.name', BỎ QUA khi dùng *, vd: 'group.*'
      *
      * @param string $id
@@ -127,17 +127,15 @@ class User {
         // kiểm tra 'không chính xác' khi: ($exact == false) và ($role có dạng 'group.name')
         $not_exact = ! $exact && authority()->validate( $id );
         // được gán TRỰC TIẾP || được gán role cùng group nhưng level cao hơn $role
-        $this->roles()->contains( function ( $role ) use ( $id, $not_exact ) {
-            return str_is( $id, $role ) || ( $not_exact && authority()->role( $id )->isSuperiorOf( $role ) );
+        return $this->roles()->contains( function ( $role ) use ( $id, $not_exact ) {
+            return str_is( $id, $role ) || ( $not_exact && authority()->role( $role )->isSuperiorOf( $id ) );
         } );
-
-        return false;
     }
 
     /**
      * Lấy danh sách ID roles User đã được gán
      *
-     * @return \Illuminate\Support\Collection
+     * @return \Illuminate\Support\Collection|string[]
      */
     public function roles() {
         if ( is_null( $this->roles ) ) {

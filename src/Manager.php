@@ -66,7 +66,7 @@ class Manager
      * Quản lý role $id
      * Sử dụng: Authority::role(sys.sadmin)->users()
      *
-     * @param string $id
+     * @param string|\Minhbang\Authority\Role $id
      *
      * @return Role
      */
