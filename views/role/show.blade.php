@@ -1,4 +1,4 @@
-@extends('backend.layouts.master')
+@extends('kit::backend.layouts.master')
 @section('content')
     <div class="row">
         <div class="col-md-6">
