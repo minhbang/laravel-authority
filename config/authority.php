@@ -27,6 +27,7 @@ return [
         'sys' => [
             // Admin
             'admin'  => 100,
+            'sadmin'  => 200,
         ],
     ],
     /**

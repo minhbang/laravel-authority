@@ -2,9 +2,11 @@
 
 namespace Minhbang\Authority;
 
+//use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Illuminate\Foundation\AliasLoader;
 use MenuManager;
+
 /**
  * Class ServiceProvider
  *
@@ -17,15 +19,15 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function boot()
     {
-        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'authority');
-        $this->loadViewsFrom(__DIR__ . '/../views', 'authority');
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        $this->loadTranslationsFrom(__DIR__.'/../lang', 'authority');
+        $this->loadViewsFrom(__DIR__.'/../views', 'authority');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadRoutesFrom(__DIR__.'/routes.php');
 
         $this->publishes([
-            __DIR__ . '/../views'                => base_path('resources/views/vendor/authority'),
-            __DIR__ . '/../lang'                 => base_path('resources/lang/vendor/authority'),
-            __DIR__ . '/../config/authority.php' => config_path('authority.php'),
+            __DIR__.'/../views' => base_path('resources/views/vendor/authority'),
+            __DIR__.'/../lang' => base_path('resources/lang/vendor/authority'),
+            __DIR__.'/../config/authority.php' => config_path('authority.php'),
         ]);
         // Add user menus
         MenuManager::addItems(config('authority.menus'));
@@ -38,7 +40,7 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/authority.php', 'authority');
+        $this->mergeConfigFrom(__DIR__.'/../config/authority.php', 'authority');
 
         $this->app->singleton('authority', function () {
             return new Manager();
@@ -46,6 +48,7 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->booting(function () {
             AliasLoader::getInstance()->alias('Authority', Facade::class);
         });
+        app('router')->aliasMiddleware('role', \Minhbang\Authority\Middleware\Role::class);
     }
 
     /**
