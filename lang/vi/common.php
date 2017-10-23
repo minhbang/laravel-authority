@@ -1,10 +1,10 @@
 <?php
 return [
-    'roles'                         => 'Chức vụ',
+    'roles'                         => 'Roles',
     'permissions'                   => 'Quyền',
     'attached_permissions'          => 'Quyền đã cấp',
-    'manage'                        => 'Quản lý Chức vụ',
-    'list'                          => 'Danh sách chức vụ',
+    'manage'                        => 'Quản lý Roles',
+    'list'                          => 'Danh sách Roles',
     'level'                         => 'Level',
     'note'                          => 'Chức vụ có Level cao hơn sẽ "kế thừa" tất cả "quyền" các chức vụ level thấp trong cùng "Nhóm"...',
     'invalid'                       => 'Không tìm thấy Chức vụ theo yêu cầu!',
