@@ -5,7 +5,6 @@ namespace Minhbang\Authority;
 //use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Illuminate\Foundation\AliasLoader;
-use MenuManager;
 
 /**
  * Class ServiceProvider
@@ -29,8 +28,10 @@ class ServiceProvider extends BaseServiceProvider
             __DIR__.'/../lang' => base_path('resources/lang/vendor/authority'),
             __DIR__.'/../config/authority.php' => config_path('authority.php'),
         ]);
-        // Add user menus
-        MenuManager::addItems(config('authority.menus'));
+
+        if(app()->isAlias('menu-manager')){
+            app('menu-manager')->addItems(config('authority.menus'));
+        }
     }
 
     /**
