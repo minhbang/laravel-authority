@@ -29,7 +29,7 @@ class ServiceProvider extends BaseServiceProvider
             __DIR__.'/../config/authority.php' => config_path('authority.php'),
         ]);
 
-        if(app()->isAlias('menu-manager')){
+        if(app()->getAlias('menu-manager')){
             app('menu-manager')->addItems(config('authority.menus'));
         }
     }
