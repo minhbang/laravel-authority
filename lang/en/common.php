@@ -30,6 +30,4 @@ return [
     'detach_permission_confirm'     => 'Do you really want to detach this Permission?',
     'detach_all_permission_success' => 'Detach all Permission success!',
     'detach_all_permission_confirm' => 'Do you really want to detach all Permissions?',
-
-
 ];

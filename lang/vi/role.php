@@ -1,8 +1,7 @@
 <?php
 return [
-    'sys' => [
-        'title'  => 'Hệ thống',
-        'sadmin' => 'Quản trị Cấp cao',
-        'admin'  => 'Quản trị',
-    ],
+    'invalid' => 'ID role không hợp lệ',
+    'sys.title' => 'Hệ thống',
+    'sys.sadmin' => 'Quản trị Cấp cao',
+    'sys.admin' => 'Quản trị',
 ];

@@ -4,25 +4,25 @@
         <div class="col-md-6">
             <div class="ibox ibox-table">
                 <div class="ibox-title">
-                    <h5><i class="fa fa-users"></i> {!! trans('authority::common.attached_users') !!}</h5>
+                    <h5><i class="fa fa-users"></i> {!! __('Attached Users') !!}</h5>
                     <div class="buttons">
                         <a id="detach-all-user"
                            href="{{route('backend.role.user.detach_all', ['role' => $role->id])}}"
                            class="btn btn-danger btn-xs">
-                            <i class="fa fa-remove"></i> {{trans('authority::common.detach_all')}}
+                            <i class="fa fa-remove"></i> {{__('Detach all')}}
                         </a>
                     </div>
                 </div>
                 <div class="ibox-content">
                     <div class="form-horizontal form-1-line">
                         <div class="form-group">
-                            {!! Form::label('user_id', trans('authority::common.add_user'), ['class' => 'col-xs-3 control-label']) !!}
+                            {!! Form::label('user_id', __('Add User'), ['class' => 'col-xs-3 control-label']) !!}
                             <div class="col-xs-9">
-                                {!! Form::select('user_id', [], null, ['id' => 'user_id', 'class' => 'form-control select-user', 'placeholder' => trans('user::user.select_user').'...']) !!}
+                                {!! Form::select('user_id', [], null, ['id' => 'user_id', 'class' => 'form-control select-user', 'placeholder' => __('Select User').'...']) !!}
                                 <a id="attach-user"
                                    href="{{route('backend.role.user.attach', ['role' => $role->id, 'user' => '__ID__'])}}"
                                    class="btn btn-danger btn-block disabled"><i
-                                            class="fa fa-plus"></i> {{trans('authority::common.attach')}}
+                                            class="fa fa-plus"></i> {{__('Attach')}}
                                 </a>
                             </div>
                         </div>
@@ -31,9 +31,9 @@
                         <thead>
                         <tr>
                             <th class="min-width">#</th>
-                            <th>{{trans('user::user.name')}}</th>
-                            <th class="min-width">{{trans('user::user.username_th')}}</th>
-                            <th class="min-width">{{trans('user::user.group_id')}}</th>
+                            <th>{{__('Fullname')}}</th>
+                            <th class="min-width">{{__('Username')}}</th>
+                            <th class="min-width">{{__('Group')}}</th>
                             <th class="min-width"></th>
                         </tr>
                         </thead>
@@ -48,7 +48,7 @@
                                     <a href="{{route('backend.role.user.detach', ['role' => $role->id, 'user' => $user->id])}}"
                                        class="detach-user text-danger"
                                        data-toggle="tooltip"
-                                       data-title="{{trans('authority::common.detach')}}">
+                                       data-title="{{__('Detach')}}">
                                         <i class="fa fa-remove"></i>
                                     </a>
                                 </td>
@@ -62,25 +62,25 @@
         <div class="col-md-6">
             <div class="ibox ibox-table">
                 <div class="ibox-title">
-                    <h5><i class="fa fa-check"></i> {!! trans('authority::common.attached_permissions') !!}</h5>
+                    <h5><i class="fa fa-check"></i> {!! __('Attached Permissions') !!}</h5>
                     <div class="buttons">
                         <a id="detach-all-permission"
                            href="{{route('backend.role.permission.detach_all', ['role' => $role->id])}}"
                            class="btn btn-warning btn-xs">
-                            <i class="fa fa-remove"></i> {{trans('authority::common.detach_all')}}
+                            <i class="fa fa-remove"></i> {{__('Detach all')}}
                         </a>
                     </div>
                 </div>
                 <div class="ibox-content">
                     <div class="form-horizontal form-1-line">
                         <div class="form-group">
-                            {!! Form::label('permission_id', trans('authority::common.add_permission'), ['class' => 'col-xs-4 control-label']) !!}
+                            {!! Form::label('permission_id', __('Add Permission'), ['class' => 'col-xs-4 control-label']) !!}
                             <div class="col-xs-8">
-                                {!! Form::select('permission_id', $selectize_permissions, null, ['id' => 'permission_id', 'class' => 'form-control', 'placeholder' => trans('authority::common.select_permission').'...']) !!}
+                                {!! Form::select('permission_id', $selectize_permissions, null, ['id' => 'permission_id', 'class' => 'form-control', 'placeholder' => __('Select Permission').'...']) !!}
                                 <a id="attach-permission"
                                    href="{{route('backend.role.permission.attach', ['role' => $role->id, 'permission' => '__ID__'])}}"
                                    class="btn btn-warning btn-block disabled">
-                                    <i class="fa fa-plus"></i> {{trans('common.add')}}
+                                    <i class="fa fa-plus"></i> {{__('Add')}}
                                 </a>
                             </div>
                         </div>
@@ -89,7 +89,7 @@
                         <thead>
                         <tr>
                             <th class="min-width">#</th>
-                            <th>{{trans('common.actions')}}</th>
+                            <th>{{__('Actions')}}</th>
                             <th class="min-width"></th>
                         </tr>
                         </thead>
@@ -108,7 +108,7 @@
                                         <a href="{{route('backend.role.permission.detach', ['role' => $role->id, 'permission' => $id])}}"
                                            class="detach-permission text-danger"
                                            data-toggle="tooltip"
-                                           data-title="{{trans('authority::common.detach')}}">
+                                           data-title="{{__('Detach')}}">
                                             <i class="fa fa-remove"></i>
                                         </a>
                                     </td>
@@ -155,8 +155,8 @@
                 message: '<div class="message-delete"><div class="confirm">' + message + '</div></div>',
                 title: '<i class="fa fa-remove"></i> ' + title,
                 buttons: {
-                    cancel: {label: '{{trans("common.cancel")}}', className: "btn-default btn-white"},
-                    confirm: {label: '{{trans("common.ok")}}', className: "btn-danger"}
+                    cancel: {label: '{{__("Cancel")}}', className: "btn-default btn-white"},
+                    confirm: {label: '{{__("OK")}}', className: "btn-danger"}
                 },
                 callback: function (ok) {
                     if (ok) {
@@ -194,16 +194,16 @@
             detach(
                 e,
                 this,
-                '{{trans("authority::common.detach_user_confirm")}}',
-                '{{trans("authority::common.detach_user")}}'
+                '{{__("Do you really want to detach this User?")}}',
+                '{{__("Detach User")}}'
             );
         });
         $('#detach-all-user').click(function (e) {
             detach(
                 e,
                 this,
-                '{{trans("authority::common.detach_all_user_confirm")}}',
-                '{{trans("authority::common.detach_all")}}'
+                '{{__("Do you really want to detach all Users?")}}',
+                '{{__("Detach all")}}'
             );
         });
 
@@ -236,16 +236,16 @@
             detach(
                 e,
                 this,
-                '{{trans("authority::common.detach_permission_confirm")}}',
-                '{{trans("authority::common.detach_permission")}}'
+                '{{__("Do you really want to detach this Permission?")}}',
+                '{{__("Detach Permission")}}'
             );
         });
         $('#detach-all-permission').click(function (e) {
             detach(
                 e,
                 this,
-                '{{trans("authority::common.detach_all_permission_confirm")}}',
-                '{{trans("authority::common.detach_all")}}'
+                '{{__("Do you really want to detach all Permissions?")}}',
+                '{{__("Detach all")}}'
             );
         });
     });

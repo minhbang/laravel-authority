@@ -32,9 +32,9 @@ class RoleController extends BackendController
     public function index()
     {
         $this->buildHeading(
-            trans('authority::common.manage'),
+            __('Manage Roles'),
             'fa-male',
-            ['#' => trans('authority::common.roles')]
+            ['#' => __('Roles')]
         );
 
         return view('authority::role.index', [
@@ -52,9 +52,9 @@ class RoleController extends BackendController
     {
         $role = $this->getRole($id);
         $this->buildHeading(
-            [trans('authority::common.roles') . ':', $role->full_title],
+            [__('Roles') . ':', $role->full_title],
             'fa-male',
-            [route('backend.role.index') => trans('authority::common.roles'), '#' => $role->full_title]
+            [route('backend.role.index') => __('Roles'), '#' => $role->full_title]
         );
         // Tất cả users đã được gán role này
         $users = $role->users();
@@ -85,7 +85,7 @@ class RoleController extends BackendController
         return response()->json(
             [
                 'type'    => 'success',
-                'content' => trans('authority::common.attach_user_success'),
+                'content' => __('Attach User success!'),
             ]
         );
     }
@@ -103,7 +103,7 @@ class RoleController extends BackendController
         return response()->json(
             [
                 'type'    => 'success',
-                'content' => trans('authority::common.detach_user_success'),
+                'content' => __('Detach User success!'),
             ]
         );
     }
@@ -120,7 +120,7 @@ class RoleController extends BackendController
         return response()->json(
             [
                 'type'    => 'success',
-                'content' => trans('authority::common.detach_all_user_success'),
+                'content' => __('Detach all User success!'),
             ]
         );
     }
@@ -140,7 +140,7 @@ class RoleController extends BackendController
         return response()->json(
             [
                 'type'    => 'success',
-                'content' => trans('authority::common.attach_permission_success'),
+                'content' => __('Attach Permission success!'),
             ]
         );
     }
@@ -158,7 +158,7 @@ class RoleController extends BackendController
         return response()->json(
             [
                 'type'    => 'success',
-                'content' => trans('authority::common.detach_permission_success'),
+                'content' => __('Detach Permission success!'),
             ]
         );
     }
@@ -175,7 +175,7 @@ class RoleController extends BackendController
         return response()->json(
             [
                 'type'    => 'success',
-                'content' => trans('authority::common.detach_all_permission_success'),
+                'content' => __('Detach all Permission success!'),
             ]
         );
     }
@@ -187,7 +187,7 @@ class RoleController extends BackendController
      */
     protected function getRole($id)
     {
-        abort_unless(authority()->definedRole($id), 404, trans('authority::role.invalid'));
+        abort_unless(authority()->definedRole($id), 404, __('Invalid role ID'));
 
         return authority()->role($id);
     }

@@ -5,7 +5,7 @@ return [
         'backend.sidebar.user.role' => [
             'priority' => 3,
             'url'      => 'route:backend.role.index',
-            'label'    => 'trans:authority::common.roles',
+            'label'    => '__:Roles',
             'icon'     => 'fa-male',
             'active'   => 'backend/role*',
         ],

@@ -29,7 +29,7 @@ class Role
             if (user_is($role, $all === 'all', $exact === 'exact')) {
                 return $next($request);
             } else {
-                return response(trans('common.forbidden'), 403);
+                return response(__('You do not have permission to access this feature!'), 403);
             }
         } else {
             if ($request->ajax()) {

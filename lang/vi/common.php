@@ -30,6 +30,4 @@ return [
     'detach_permission_confirm'     => 'Bạn có thật sự muốn thu hồi Quyền này?',
     'detach_all_permission_success' => 'Thu hồi tất cả Quyền thành công!',
     'detach_all_permission_confirm' => 'Bạn có thật sự muốn hủy tất cả Quyền?',
-
-
 ];

@@ -98,8 +98,8 @@ class Role {
         $this->id = $id;
         list( $this->group, $this->name ) = explode( '.', $id );
         $this->level = $level;
-        $this->title = trans( "authority::role.{$this->id}" );
-        $this->group_title = trans( "authority::role.{$this->group}.title" );
+        $this->title = __( "authority::role.{$this->id}" );
+        $this->group_title = __( "authority::role.{$this->group}.title" );
         $this->full_title = "{$this->title} ({$this->group_title})";
         $this->url = route( 'backend.role.show', [ 'role' => $this->id ] );
     }

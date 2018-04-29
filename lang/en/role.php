@@ -1,8 +1,7 @@
 <?php
 return [
-    'sys' => [
-        'title'  => 'System',
-        'sadmin' => 'Super Administrator',
-        'admin'  => 'Administrator',
-    ],
+    'invalid' => 'Invalid role ID',
+    'sys.title' => 'System',
+    'sys.sadmin' => 'Super Administrator',
+    'sys.admin' => 'Administrator',
 ];

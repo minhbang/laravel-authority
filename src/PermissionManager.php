@@ -1,8 +1,8 @@
 <?php namespace Minhbang\Authority;
 
+use Authority;
 use Illuminate\Support\Collection;
 use Kit;
-use Authority;
 
 /**
  * Class PermissionManager
@@ -46,7 +46,7 @@ class PermissionManager extends Collection
     public function register($model, $action, $title = null)
     {
         $permission = [];
-        $permission['title'] = $title ?: "trans::authority::permission.{$action}";
+        $permission['title'] = $title ?: "__::" . ucfirst($action);
         $permission['class'] = Kit::getClass($model);
         $permission['alias'] = Kit::alias($model);
         $permission['action'] = $action;
